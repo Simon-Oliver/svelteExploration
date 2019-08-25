@@ -1,11 +1,31 @@
 <script>
-  export let name;
+  import Header from './Header.svelte';
+  import Home from './Home.svelte';
+  import About from './About.svelte';
+
+  let state = {
+    Home,
+    About
+  };
+
+  export const handleSelect = e => {
+    selected = event.target.textContent;
+  };
+
+  let selected = 'Home';
 </script>
 
 <style>
-  h1 {
-    color: purple;
+  .app-container {
+    box-sizing: border-box;
+    background: lightcoral;
+    height: 100vh;
+    width: 100vw;
+    padding: 5rem;
   }
 </style>
 
-<h1>Hello {name}!</h1>
+<Header {handleSelect} />
+<div class="app-container">
+  <svelte:component this={state[selected]} />
+</div>

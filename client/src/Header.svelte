@@ -9,6 +9,8 @@
 
 <style>
   .header-container {
+    position: fixed;
+    width: 100%;
     display: flex;
     align-items: center;
     background: rgb(22, 22, 22);
@@ -21,6 +23,12 @@
     width: 180px;
     color: white;
     margin: 0 5rem;
+    list-style: none;
+    padding: 0;
+  }
+
+  .header-link:hover {
+    cursor: pointer;
   }
 </style>
 

@@ -495,7 +495,7 @@ var app = (function () {
     	return child_ctx;
     }
 
-    // (32:0) {:else}
+    // (36:0) {:else}
     function create_else_block(ctx) {
     	var ol;
 
@@ -514,7 +514,7 @@ var app = (function () {
     			for (var i = 0; i < each_blocks.length; i += 1) {
     				each_blocks[i].c();
     			}
-    			add_location(ol, file$2, 32, 2, 719);
+    			add_location(ol, file$2, 36, 2, 794);
     		},
 
     		m: function mount(target, anchor) {
@@ -561,7 +561,7 @@ var app = (function () {
     	};
     }
 
-    // (30:0) {#if isError}
+    // (34:0) {#if isError}
     function create_if_block(ctx) {
     	var current;
 
@@ -604,7 +604,7 @@ var app = (function () {
     	};
     }
 
-    // (34:4) {#each posts as post}
+    // (38:4) {#each posts as post}
     function create_each_block(ctx) {
     	var li, h3, t0_value = ctx.post.title + "", t0, t1, p, t2_value = ctx.post.body + "", t2, t3;
 
@@ -617,9 +617,9 @@ var app = (function () {
     			p = element("p");
     			t2 = text(t2_value);
     			t3 = space();
-    			add_location(h3, file$2, 35, 8, 769);
-    			add_location(p, file$2, 36, 8, 799);
-    			add_location(li, file$2, 34, 6, 756);
+    			add_location(h3, file$2, 39, 8, 844);
+    			add_location(p, file$2, 40, 8, 874);
+    			add_location(li, file$2, 38, 6, 831);
     		},
 
     		m: function mount(target, anchor) {
@@ -651,7 +651,7 @@ var app = (function () {
     }
 
     function create_fragment$2(ctx) {
-    	var current_block_type_index, if_block, if_block_anchor, current;
+    	var h2, t0_value = ctx.message.message ? ctx.message.message : 'Loading...' + "", t0, t1, current_block_type_index, if_block, if_block_anchor, current;
 
     	var if_block_creators = [
     		create_if_block,
@@ -670,8 +670,12 @@ var app = (function () {
 
     	return {
     		c: function create() {
+    			h2 = element("h2");
+    			t0 = text(t0_value);
+    			t1 = space();
     			if_block.c();
     			if_block_anchor = empty();
+    			add_location(h2, file$2, 31, 0, 682);
     		},
 
     		l: function claim(nodes) {
@@ -679,12 +683,19 @@ var app = (function () {
     		},
 
     		m: function mount(target, anchor) {
+    			insert(target, h2, anchor);
+    			append(h2, t0);
+    			insert(target, t1, anchor);
     			if_blocks[current_block_type_index].m(target, anchor);
     			insert(target, if_block_anchor, anchor);
     			current = true;
     		},
 
     		p: function update(changed, ctx) {
+    			if ((!current || changed.message) && t0_value !== (t0_value = ctx.message.message ? ctx.message.message : 'Loading...' + "")) {
+    				set_data(t0, t0_value);
+    			}
+
     			var previous_block_index = current_block_type_index;
     			current_block_type_index = select_block_type(changed, ctx);
     			if (current_block_type_index === previous_block_index) {
@@ -718,6 +729,11 @@ var app = (function () {
     		},
 
     		d: function destroy(detaching) {
+    			if (detaching) {
+    				detach(h2);
+    				detach(t1);
+    			}
+
     			if_blocks[current_block_type_index].d(detaching);
 
     			if (detaching) {
@@ -735,8 +751,10 @@ var app = (function () {
 
       let isError = false;
 
+      let message = {};
+
       onMount(async () => {
-        const response = await fetch('https://jsonplaceholder.typicode.com/posts/lol');
+        const response = await fetch('https://jsonplaceholder.typicode.com/posts');
         if (response.status === 200) {
           const data = await response.json();
           $$invalidate('posts', posts = [...posts, ...data]);
@@ -747,10 +765,10 @@ var app = (function () {
 
         const helloRes = await fetch('http://localhost:8000/hello');
         const helloData = await helloRes.json();
-        console.log(helloData);
+        $$invalidate('message', message = helloData);
       });
 
-    	return { posts, error, isError };
+    	return { posts, error, isError, message };
     }
 
     class Home extends SvelteComponentDev {

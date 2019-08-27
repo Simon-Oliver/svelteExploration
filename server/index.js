@@ -21,7 +21,7 @@ const PORT = process.env.PORT || 8000;
 // });
 
 app.get('/hello', function(req, res) {
-  res.json({ message: 'Hello' });
+  res.json({ message: 'This is a sever message mate!' });
 });
 
 app.listen(PORT, () => console.log(`Listening on ${PORT}`));

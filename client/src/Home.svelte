@@ -7,8 +7,10 @@
 
   let isError = false;
 
+  let message = {};
+
   onMount(async () => {
-    const response = await fetch('https://jsonplaceholder.typicode.com/posts/lol');
+    const response = await fetch('https://jsonplaceholder.typicode.com/posts');
     if (response.status === 200) {
       const data = await response.json();
       posts = [...posts, ...data];
@@ -19,13 +21,15 @@
 
     const helloRes = await fetch('http://localhost:8000/hello');
     const helloData = await helloRes.json();
-    console.log(helloData);
+    message = helloData;
   });
 </script>
 
 <style>
 
 </style>
+
+<h2>{message.message ? message.message : 'Loading...'}</h2>
 
 {#if isError}
   <ErrorMessage {error} />

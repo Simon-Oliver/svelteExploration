@@ -1,20 +1,22 @@
 <script>
-  import Header from './Header.svelte';
-  import Home from './Home.svelte';
-  import About from './About.svelte';
-  import Contact from './Contact.svelte';
+  import Header from './components/pages/Header.svelte';
+  import Home from './components/pages/Home.svelte';
+  import About from './components/pages/About.svelte';
+  import Contact from './components/pages/Contact.svelte';
+  import ToDo from './components/pages/ToDo.svelte';
 
   let state = {
     Home,
     About,
-    Contact
+    Contact,
+    ToDo
   };
 
   export const handleSelect = e => {
     selected = event.target.textContent;
   };
 
-  let selected = 'Home';
+  let selected = 'ToDo';
 </script>
 
 <style>

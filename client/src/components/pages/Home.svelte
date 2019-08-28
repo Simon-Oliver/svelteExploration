@@ -1,5 +1,5 @@
 <script>
-  import ErrorMessage from './ErrorMessage.svelte';
+  import ErrorMessage from '../messageComponents/ErrorMessage.svelte';
   import { onMount } from 'svelte';
 
   let posts = [];

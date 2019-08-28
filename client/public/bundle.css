@@ -1,5 +1,6 @@
 .app-container.svelte-1lm8tcl{box-sizing:border-box;height:100vh;width:100vw}main.svelte-1lm8tcl{padding:5rem}
-.header-container.svelte-dugusn{position:fixed;width:100%;display:flex;align-items:center;background:rgb(22, 22, 22);height:50px}.link-container.svelte-dugusn{display:flex;justify-content:space-between;width:180px;color:white;margin:0 5rem;list-style:none;padding:0}.header-link.svelte-dugusn:hover{cursor:pointer}
 p.svelte-yucpru{height:120vh}
+.header-container.svelte-ma2i4d{position:fixed;width:100%;display:flex;align-items:center;background:rgb(22, 22, 22);height:50px}.link-container.svelte-ma2i4d{display:flex;justify-content:space-between;width:230px;color:white;margin:0 5rem;list-style:none;padding:0}.header-link.svelte-ma2i4d:hover{cursor:pointer}
+.card-content.svelte-11k8un7{color:pink}
 
 /*# sourceMappingURL=bundle.css.map */

@@ -8,13 +8,14 @@
 </script>
 
 <style>
-  .header-container {
+  .nav.header-container {
     position: fixed;
     width: 100%;
     display: flex;
     align-items: center;
     background: rgb(22, 22, 22);
     height: 50px;
+    z-index: 9999;
   }
 
   .link-container {
@@ -32,11 +33,11 @@
   }
 </style>
 
-<div class="header-container">
+<div class="nav header-container">
   <ul on:click={handleSelect} class="link-container">
     <li class="header-link">Home</li>
     <li class="header-link">About</li>
     <li class="header-link">Contact</li>
-    <li class="header-link">ToDo</li>
+    <li class="header-link">Uploader</li>
   </ul>
 </div>

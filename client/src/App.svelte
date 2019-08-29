@@ -3,20 +3,20 @@
   import Home from './components/pages/Home.svelte';
   import About from './components/pages/About.svelte';
   import Contact from './components/pages/Contact.svelte';
-  import ToDo from './components/pages/ToDo.svelte';
+  import Uploader from './components/pages/Uploader.svelte';
 
   let state = {
     Home,
     About,
     Contact,
-    ToDo
+    Uploader
   };
 
   export const handleSelect = e => {
     selected = event.target.textContent;
   };
 
-  let selected = 'ToDo';
+  let selected = 'Uploader';
 </script>
 
 <style>

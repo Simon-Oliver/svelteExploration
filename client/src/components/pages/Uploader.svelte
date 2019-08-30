@@ -1,9 +1,12 @@
 <script>
   import Papa from 'papaparse';
   import Table from '../Table.svelte';
+  import Modal from '../Modal.svelte';
 
   let data = [];
+  let showModal = true;
   $: isData = data.length !== 0;
+  let selected = {};
 
   const parseData = file => {
     Papa.parse(file, {
@@ -22,14 +25,40 @@
     parseData(csvData);
     e.target.value = null;
   };
+
+  const handelSelect = e => {
+    const index = e.detail.target.parentElement.id;
+    selected = data[index];
+    console.log(selected);
+
+    convertToText(employerTxT, selected);
+  };
+
+  const convertToText = (text, data) => {
+    let newText = text.replace(/{employerName}/g, data['employerName']);
+    newText = newText.replace(/{userName}/g, data['userName']);
+
+    console.log(newText);
+  };
+
+  const employerTxT = 'Hi {employerName} we need the TP for {userName}';
 </script>
 
 <style>
 
 </style>
 
-<div class="container">
+{#if showModal}
+  <Modal on:close={() => (showModal = false)}>
+    <h4 slot="body">
+      Lorem ipsum dolor sit amet consectetur adipisicing elit. Quas, ex quae? Iste harum dignissimos
+      quos commodi sapiente quaerat sunt nobis voluptate et asperiores architecto, amet, adipisci
+      tenetur natus excepturi nam.
+    </h4>
+  </Modal>
+{/if}
 
+<div class="container">
   <form action="#">
     <div class="file-field input-field">
       <div class="btn">
@@ -43,7 +72,7 @@
   </form>
 
   {#if isData}
-    <Table {data} />
+    <Table {data} on:select={handelSelect} />
   {:else}
     <p>Please uploade some data</p>
   {/if}

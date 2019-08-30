@@ -1,9 +1,12 @@
 <script>
   import TableItem from './TableItem.svelte';
+  import { createEventDispatcher } from 'svelte';
+  const dispatch = createEventDispatcher();
+
   export let data = [];
 </script>
 
-<table class="highlight">
+<table class="highlight" on:click={e => dispatch('select', e)}>
   <thead>
     <tr>
       <th>Name</th>
@@ -12,8 +15,8 @@
     </tr>
   </thead>
   <tbody>
-    {#each data as item}
-      <TableItem {...item} />
+    {#each data as item, index}
+      <TableItem {...item} {index} />
     {/each}
   </tbody>
 </table>

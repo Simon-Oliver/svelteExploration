@@ -30,6 +30,22 @@ var app = (function () {
     function safe_not_equal(a, b) {
         return a != a ? b == b : a !== b || ((a && typeof a === 'object') || typeof a === 'function');
     }
+    function create_slot(definition, ctx, fn) {
+        if (definition) {
+            const slot_ctx = get_slot_context(definition, ctx, fn);
+            return definition[0](slot_ctx);
+        }
+    }
+    function get_slot_context(definition, ctx, fn) {
+        return definition[1]
+            ? assign({}, assign(ctx.$$scope.ctx, definition[1](fn ? fn(ctx) : {})))
+            : ctx.$$scope.ctx;
+    }
+    function get_slot_changes(definition, ctx, changed, fn) {
+        return definition[1]
+            ? assign({}, assign(ctx.$$scope.changed || {}, definition[1](fn ? fn(changed) : {})))
+            : ctx.$$scope.changed || {};
+    }
 
     function append(target, node) {
         target.appendChild(node);
@@ -76,6 +92,11 @@ var app = (function () {
         if (text.data !== data)
             text.data = data;
     }
+    function custom_event(type, detail) {
+        const e = document.createEvent('CustomEvent');
+        e.initCustomEvent(type, false, false, detail);
+        return e;
+    }
 
     let current_component;
     function set_current_component(component) {
@@ -88,6 +109,20 @@ var app = (function () {
     }
     function onMount(fn) {
         get_current_component().$$.on_mount.push(fn);
+    }
+    function createEventDispatcher() {
+        const component = current_component;
+        return (type, detail) => {
+            const callbacks = component.$$.callbacks[type];
+            if (callbacks) {
+                // TODO are there situations where events could be dispatched
+                // in a server (non-DOM) environment?
+                const event = custom_event(type, detail);
+                callbacks.slice().forEach(fn => {
+                    fn.call(component, event);
+                });
+            }
+        };
     }
 
     const dirty_components = [];
@@ -942,10 +977,11 @@ var app = (function () {
     			t3 = space();
     			td2 = element("td");
     			t4 = text(ctx.phoneNr);
-    			add_location(td0, file$5, 7, 2, 99);
-    			add_location(td1, file$5, 8, 2, 121);
-    			add_location(td2, file$5, 9, 2, 147);
-    			add_location(tr, file$5, 6, 0, 92);
+    			add_location(td0, file$5, 8, 2, 130);
+    			add_location(td1, file$5, 9, 2, 152);
+    			add_location(td2, file$5, 10, 2, 178);
+    			attr(tr, "id", ctx.index);
+    			add_location(tr, file$5, 7, 0, 112);
     		},
 
     		l: function claim(nodes) {
@@ -976,6 +1012,10 @@ var app = (function () {
     			if (changed.phoneNr) {
     				set_data(t4, ctx.phoneNr);
     			}
+
+    			if (changed.index) {
+    				attr(tr, "id", ctx.index);
+    			}
     		},
 
     		i: noop,
@@ -990,9 +1030,9 @@ var app = (function () {
     }
 
     function instance$3($$self, $$props, $$invalidate) {
-    	let { userName, employerName, phoneNr } = $$props;
+    	let { userName, employerName, phoneNr, index } = $$props;
 
-    	const writable_props = ['userName', 'employerName', 'phoneNr'];
+    	const writable_props = ['userName', 'employerName', 'phoneNr', 'index'];
     	Object.keys($$props).forEach(key => {
     		if (!writable_props.includes(key) && !key.startsWith('$$')) console.warn(`<TableItem> was created with unknown prop '${key}'`);
     	});
@@ -1001,15 +1041,16 @@ var app = (function () {
     		if ('userName' in $$props) $$invalidate('userName', userName = $$props.userName);
     		if ('employerName' in $$props) $$invalidate('employerName', employerName = $$props.employerName);
     		if ('phoneNr' in $$props) $$invalidate('phoneNr', phoneNr = $$props.phoneNr);
+    		if ('index' in $$props) $$invalidate('index', index = $$props.index);
     	};
 
-    	return { userName, employerName, phoneNr };
+    	return { userName, employerName, phoneNr, index };
     }
 
     class TableItem extends SvelteComponentDev {
     	constructor(options) {
     		super(options);
-    		init(this, options, instance$3, create_fragment$5, safe_not_equal, ["userName", "employerName", "phoneNr"]);
+    		init(this, options, instance$3, create_fragment$5, safe_not_equal, ["userName", "employerName", "phoneNr", "index"]);
 
     		const { ctx } = this.$$;
     		const props = options.props || {};
@@ -1021,6 +1062,9 @@ var app = (function () {
     		}
     		if (ctx.phoneNr === undefined && !('phoneNr' in props)) {
     			console.warn("<TableItem> was created without expected prop 'phoneNr'");
+    		}
+    		if (ctx.index === undefined && !('index' in props)) {
+    			console.warn("<TableItem> was created without expected prop 'index'");
     		}
     	}
 
@@ -1047,6 +1091,14 @@ var app = (function () {
     	set phoneNr(value) {
     		throw new Error("<TableItem>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
     	}
+
+    	get index() {
+    		throw new Error("<TableItem>: Props cannot be read directly from the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+    	}
+
+    	set index(value) {
+    		throw new Error("<TableItem>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+    	}
     }
 
     /* src/components/Table.svelte generated by Svelte v3.9.1 */
@@ -1056,15 +1108,17 @@ var app = (function () {
     function get_each_context$1(ctx, list, i) {
     	const child_ctx = Object.create(ctx);
     	child_ctx.item = list[i];
+    	child_ctx.index = i;
     	return child_ctx;
     }
 
-    // (15:4) {#each data as item}
+    // (18:4) {#each data as item, index}
     function create_each_block$1(ctx) {
     	var current;
 
     	var tableitem_spread_levels = [
-    		ctx.item
+    		ctx.item,
+    		{ index: ctx.index }
     	];
 
     	let tableitem_props = {};
@@ -1085,7 +1139,8 @@ var app = (function () {
 
     		p: function update(changed, ctx) {
     			var tableitem_changes = (changed.data) ? get_spread_update(tableitem_spread_levels, [
-    									ctx.item
+    									ctx.item,
+    			tableitem_spread_levels[1]
     								]) : {};
     			tableitem.$set(tableitem_changes);
     		},
@@ -1109,7 +1164,7 @@ var app = (function () {
     }
 
     function create_fragment$6(ctx) {
-    	var table, thead, tr, th0, t1, th1, t3, th2, t5, tbody, current;
+    	var table, thead, tr, th0, t1, th1, t3, th2, t5, tbody, current, dispose;
 
     	var each_value = ctx.data;
 
@@ -1142,14 +1197,15 @@ var app = (function () {
     			for (var i = 0; i < each_blocks.length; i += 1) {
     				each_blocks[i].c();
     			}
-    			add_location(th0, file$6, 8, 6, 141);
-    			add_location(th1, file$6, 9, 6, 161);
-    			add_location(th2, file$6, 10, 6, 185);
-    			add_location(tr, file$6, 7, 4, 130);
-    			add_location(thead, file$6, 6, 2, 118);
-    			add_location(tbody, file$6, 13, 2, 230);
+    			add_location(th0, file$6, 11, 6, 274);
+    			add_location(th1, file$6, 12, 6, 294);
+    			add_location(th2, file$6, 13, 6, 318);
+    			add_location(tr, file$6, 10, 4, 263);
+    			add_location(thead, file$6, 9, 2, 251);
+    			add_location(tbody, file$6, 16, 2, 363);
     			attr(table, "class", "highlight");
-    			add_location(table, file$6, 5, 0, 90);
+    			add_location(table, file$6, 8, 0, 185);
+    			dispose = listen(table, "click", ctx.click_handler);
     		},
 
     		l: function claim(nodes) {
@@ -1219,23 +1275,32 @@ var app = (function () {
     			}
 
     			destroy_each(each_blocks, detaching);
+
+    			dispose();
     		}
     	};
     }
 
     function instance$4($$self, $$props, $$invalidate) {
-    	let { data = [] } = $$props;
+    	
+      const dispatch = createEventDispatcher();
+
+      let { data = [] } = $$props;
 
     	const writable_props = ['data'];
     	Object.keys($$props).forEach(key => {
     		if (!writable_props.includes(key) && !key.startsWith('$$')) console.warn(`<Table> was created with unknown prop '${key}'`);
     	});
 
+    	function click_handler(e) {
+    		return dispatch('select', e);
+    	}
+
     	$$self.$set = $$props => {
     		if ('data' in $$props) $$invalidate('data', data = $$props.data);
     	};
 
-    	return { data };
+    	return { dispatch, data, click_handler };
     }
 
     class Table extends SvelteComponentDev {
@@ -1253,11 +1318,215 @@ var app = (function () {
     	}
     }
 
+    /* src/components/Modal.svelte generated by Svelte v3.9.1 */
+
+    const file$7 = "src/components/Modal.svelte";
+
+    const get_body_slot_changes = () => ({});
+    const get_body_slot_context = () => ({});
+
+    function create_fragment$7(ctx) {
+    	var div0, t0, div2, div1, t1, a, current, dispose;
+
+    	const body_slot_template = ctx.$$slots.body;
+    	const body_slot = create_slot(body_slot_template, ctx, get_body_slot_context);
+
+    	return {
+    		c: function create() {
+    			div0 = element("div");
+    			t0 = space();
+    			div2 = element("div");
+    			div1 = element("div");
+
+    			if (body_slot) body_slot.c();
+    			t1 = space();
+    			a = element("a");
+    			a.textContent = "Close";
+    			attr(div0, "class", "modal-background svelte-1pbzyye");
+    			add_location(div0, file$7, 35, 0, 583);
+
+    			attr(a, "class", "button waves-effect waves-light btn svelte-1pbzyye");
+    			add_location(a, file$7, 40, 4, 735);
+    			attr(div1, "class", "modal-content");
+    			add_location(div1, file$7, 38, 2, 678);
+    			attr(div2, "class", "modal-box svelte-1pbzyye");
+    			add_location(div2, file$7, 37, 0, 652);
+
+    			dispose = [
+    				listen(div0, "click", ctx.click_handler),
+    				listen(a, "click", ctx.click_handler_1)
+    			];
+    		},
+
+    		l: function claim(nodes) {
+    			if (body_slot) body_slot.l(div1_nodes);
+    			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
+    		},
+
+    		m: function mount(target, anchor) {
+    			insert(target, div0, anchor);
+    			insert(target, t0, anchor);
+    			insert(target, div2, anchor);
+    			append(div2, div1);
+
+    			if (body_slot) {
+    				body_slot.m(div1, null);
+    			}
+
+    			append(div1, t1);
+    			append(div1, a);
+    			current = true;
+    		},
+
+    		p: function update(changed, ctx) {
+    			if (body_slot && body_slot.p && changed.$$scope) {
+    				body_slot.p(
+    					get_slot_changes(body_slot_template, ctx, changed, get_body_slot_changes),
+    					get_slot_context(body_slot_template, ctx, get_body_slot_context)
+    				);
+    			}
+    		},
+
+    		i: function intro(local) {
+    			if (current) return;
+    			transition_in(body_slot, local);
+    			current = true;
+    		},
+
+    		o: function outro(local) {
+    			transition_out(body_slot, local);
+    			current = false;
+    		},
+
+    		d: function destroy(detaching) {
+    			if (detaching) {
+    				detach(div0);
+    				detach(t0);
+    				detach(div2);
+    			}
+
+    			if (body_slot) body_slot.d(detaching);
+    			run_all(dispose);
+    		}
+    	};
+    }
+
+    function instance$5($$self, $$props, $$invalidate) {
+    	const dispatch = createEventDispatcher();
+
+    	let { $$slots = {}, $$scope } = $$props;
+
+    	function click_handler() {
+    		return dispatch('close');
+    	}
+
+    	function click_handler_1() {
+    		return dispatch('close');
+    	}
+
+    	$$self.$set = $$props => {
+    		if ('$$scope' in $$props) $$invalidate('$$scope', $$scope = $$props.$$scope);
+    	};
+
+    	return {
+    		dispatch,
+    		click_handler,
+    		click_handler_1,
+    		$$slots,
+    		$$scope
+    	};
+    }
+
+    class Modal extends SvelteComponentDev {
+    	constructor(options) {
+    		super(options);
+    		init(this, options, instance$5, create_fragment$7, safe_not_equal, []);
+    	}
+    }
+
     /* src/components/pages/Uploader.svelte generated by Svelte v3.9.1 */
 
-    const file$7 = "src/components/pages/Uploader.svelte";
+    const file$8 = "src/components/pages/Uploader.svelte";
 
-    // (47:2) {:else}
+    // (51:0) {#if showModal}
+    function create_if_block_1(ctx) {
+    	var current;
+
+    	var modal = new Modal({
+    		props: {
+    		$$slots: {
+    		default: [create_default_slot],
+    		body: [create_body_slot]
+    	},
+    		$$scope: { ctx }
+    	},
+    		$$inline: true
+    	});
+    	modal.$on("close", ctx.close_handler);
+
+    	return {
+    		c: function create() {
+    			modal.$$.fragment.c();
+    		},
+
+    		m: function mount(target, anchor) {
+    			mount_component(modal, target, anchor);
+    			current = true;
+    		},
+
+    		i: function intro(local) {
+    			if (current) return;
+    			transition_in(modal.$$.fragment, local);
+
+    			current = true;
+    		},
+
+    		o: function outro(local) {
+    			transition_out(modal.$$.fragment, local);
+    			current = false;
+    		},
+
+    		d: function destroy(detaching) {
+    			destroy_component(modal, detaching);
+    		}
+    	};
+    }
+
+    // (53:4) <h4 slot="body">
+    function create_body_slot(ctx) {
+    	var h4;
+
+    	return {
+    		c: function create() {
+    			h4 = element("h4");
+    			h4.textContent = "Lorem ipsum dolor sit amet consectetur adipisicing elit. Quas, ex quae? Iste harum dignissimos\n      quos commodi sapiente quaerat sunt nobis voluptate et asperiores architecto, amet, adipisci\n      tenetur natus excepturi nam.";
+    			attr(h4, "slot", "body");
+    			add_location(h4, file$8, 52, 4, 1159);
+    		},
+
+    		m: function mount(target, anchor) {
+    			insert(target, h4, anchor);
+    		},
+
+    		d: function destroy(detaching) {
+    			if (detaching) {
+    				detach(h4);
+    			}
+    		}
+    	};
+    }
+
+    // (52:2) <Modal on:close={() => (showModal = false)}>
+    function create_default_slot(ctx) {
+    	return {
+    		c: noop,
+    		m: noop,
+    		p: noop,
+    		d: noop
+    	};
+    }
+
+    // (76:2) {:else}
     function create_else_block$1(ctx) {
     	var p;
 
@@ -1265,7 +1534,7 @@ var app = (function () {
     		c: function create() {
     			p = element("p");
     			p.textContent = "Please uploade some data";
-    			add_location(p, file$7, 47, 4, 947);
+    			add_location(p, file$8, 76, 4, 1873);
     		},
 
     		m: function mount(target, anchor) {
@@ -1284,7 +1553,7 @@ var app = (function () {
     	};
     }
 
-    // (45:2) {#if isData}
+    // (74:2) {#if isData}
     function create_if_block$1(ctx) {
     	var current;
 
@@ -1292,6 +1561,7 @@ var app = (function () {
     		props: { data: ctx.data },
     		$$inline: true
     	});
+    	table.$on("select", ctx.handelSelect);
 
     	return {
     		c: function create() {
@@ -1327,8 +1597,10 @@ var app = (function () {
     	};
     }
 
-    function create_fragment$7(ctx) {
-    	var div3, form, div2, div0, span, t1, input0, t2, div1, input1, t3, current_block_type_index, if_block, current, dispose;
+    function create_fragment$8(ctx) {
+    	var t0, div3, form, div2, div0, span, t2, input0, t3, div1, input1, t4, current_block_type_index, if_block1, current, dispose;
+
+    	var if_block0 = (ctx.showModal) && create_if_block_1(ctx);
 
     	var if_block_creators = [
     		create_if_block$1,
@@ -1343,40 +1615,42 @@ var app = (function () {
     	}
 
     	current_block_type_index = select_block_type(null, ctx);
-    	if_block = if_blocks[current_block_type_index] = if_block_creators[current_block_type_index](ctx);
+    	if_block1 = if_blocks[current_block_type_index] = if_block_creators[current_block_type_index](ctx);
 
     	return {
     		c: function create() {
+    			if (if_block0) if_block0.c();
+    			t0 = space();
     			div3 = element("div");
     			form = element("form");
     			div2 = element("div");
     			div0 = element("div");
     			span = element("span");
     			span.textContent = "File";
-    			t1 = space();
-    			input0 = element("input");
     			t2 = space();
+    			input0 = element("input");
+    			t3 = space();
     			div1 = element("div");
     			input1 = element("input");
-    			t3 = space();
-    			if_block.c();
-    			add_location(span, file$7, 35, 8, 654);
+    			t4 = space();
+    			if_block1.c();
+    			add_location(span, file$8, 64, 8, 1555);
     			attr(input0, "type", "file");
-    			add_location(input0, file$7, 36, 8, 680);
+    			add_location(input0, file$8, 65, 8, 1581);
     			attr(div0, "class", "btn");
-    			add_location(div0, file$7, 34, 6, 628);
+    			add_location(div0, file$8, 63, 6, 1529);
     			attr(input1, "class", "file-path validate");
     			attr(input1, "type", "text");
     			attr(input1, "placeholder", "Upload CVS");
-    			add_location(input1, file$7, 39, 8, 788);
+    			add_location(input1, file$8, 68, 8, 1689);
     			attr(div1, "class", "file-path-wrapper");
-    			add_location(div1, file$7, 38, 6, 748);
+    			add_location(div1, file$8, 67, 6, 1649);
     			attr(div2, "class", "file-field input-field");
-    			add_location(div2, file$7, 33, 4, 585);
+    			add_location(div2, file$8, 62, 4, 1486);
     			attr(form, "action", "#");
-    			add_location(form, file$7, 32, 2, 563);
+    			add_location(form, file$8, 61, 2, 1464);
     			attr(div3, "class", "container");
-    			add_location(div3, file$7, 30, 0, 536);
+    			add_location(div3, file$8, 60, 0, 1438);
     			dispose = listen(input0, "change", ctx.handleOnSubmit);
     		},
 
@@ -1385,22 +1659,41 @@ var app = (function () {
     		},
 
     		m: function mount(target, anchor) {
+    			if (if_block0) if_block0.m(target, anchor);
+    			insert(target, t0, anchor);
     			insert(target, div3, anchor);
     			append(div3, form);
     			append(form, div2);
     			append(div2, div0);
     			append(div0, span);
-    			append(div0, t1);
+    			append(div0, t2);
     			append(div0, input0);
-    			append(div2, t2);
+    			append(div2, t3);
     			append(div2, div1);
     			append(div1, input1);
-    			append(div3, t3);
+    			append(div3, t4);
     			if_blocks[current_block_type_index].m(div3, null);
     			current = true;
     		},
 
     		p: function update(changed, ctx) {
+    			if (ctx.showModal) {
+    				if (!if_block0) {
+    					if_block0 = create_if_block_1(ctx);
+    					if_block0.c();
+    					transition_in(if_block0, 1);
+    					if_block0.m(t0.parentNode, t0);
+    				} else {
+    									transition_in(if_block0, 1);
+    				}
+    			} else if (if_block0) {
+    				group_outros();
+    				transition_out(if_block0, 1, 1, () => {
+    					if_block0 = null;
+    				});
+    				check_outros();
+    			}
+
     			var previous_block_index = current_block_type_index;
     			current_block_type_index = select_block_type(changed, ctx);
     			if (current_block_type_index === previous_block_index) {
@@ -1412,29 +1705,34 @@ var app = (function () {
     				});
     				check_outros();
 
-    				if_block = if_blocks[current_block_type_index];
-    				if (!if_block) {
-    					if_block = if_blocks[current_block_type_index] = if_block_creators[current_block_type_index](ctx);
-    					if_block.c();
+    				if_block1 = if_blocks[current_block_type_index];
+    				if (!if_block1) {
+    					if_block1 = if_blocks[current_block_type_index] = if_block_creators[current_block_type_index](ctx);
+    					if_block1.c();
     				}
-    				transition_in(if_block, 1);
-    				if_block.m(div3, null);
+    				transition_in(if_block1, 1);
+    				if_block1.m(div3, null);
     			}
     		},
 
     		i: function intro(local) {
     			if (current) return;
-    			transition_in(if_block);
+    			transition_in(if_block0);
+    			transition_in(if_block1);
     			current = true;
     		},
 
     		o: function outro(local) {
-    			transition_out(if_block);
+    			transition_out(if_block0);
+    			transition_out(if_block1);
     			current = false;
     		},
 
     		d: function destroy(detaching) {
+    			if (if_block0) if_block0.d(detaching);
+
     			if (detaching) {
+    				detach(t0);
     				detach(div3);
     			}
 
@@ -1444,10 +1742,14 @@ var app = (function () {
     	};
     }
 
-    function instance$5($$self, $$props, $$invalidate) {
+    const employerTxT = 'Hi {employerName} we need the TP for {userName}';
+
+    function instance$6($$self, $$props, $$invalidate) {
     	
 
       let data = [];
+      let showModal = true;
+      let selected = {};
 
       const parseData = file => {
         papaparse_min.parse(file, {
@@ -1467,27 +1769,55 @@ var app = (function () {
         e.target.value = null;
       };
 
+      const handelSelect = e => {
+        const index = e.detail.target.parentElement.id;
+        selected = data[index];
+        console.log(selected);
+
+        convertToText(employerTxT, selected);
+      };
+
+      const convertToText = (text, data) => {
+        let newText = text.replace(/{employerName}/g, data['employerName']);
+        newText = newText.replace(/{userName}/g, data['userName']);
+
+        console.log(newText);
+      };
+
+    	function close_handler() {
+    		const $$result = (showModal = false);
+    		$$invalidate('showModal', showModal);
+    		return $$result;
+    	}
+
     	let isData;
 
     	$$self.$$.update = ($$dirty = { data: 1 }) => {
     		if ($$dirty.data) { $$invalidate('isData', isData = data.length !== 0); }
     	};
 
-    	return { data, handleOnSubmit, isData };
+    	return {
+    		data,
+    		showModal,
+    		handleOnSubmit,
+    		handelSelect,
+    		isData,
+    		close_handler
+    	};
     }
 
     class Uploader extends SvelteComponentDev {
     	constructor(options) {
     		super(options);
-    		init(this, options, instance$5, create_fragment$7, safe_not_equal, []);
+    		init(this, options, instance$6, create_fragment$8, safe_not_equal, []);
     	}
     }
 
     /* src/App.svelte generated by Svelte v3.9.1 */
 
-    const file$8 = "src/App.svelte";
+    const file$9 = "src/App.svelte";
 
-    function create_fragment$8(ctx) {
+    function create_fragment$9(ctx) {
     	var div, t, main, current;
 
     	var header = new Header({
@@ -1513,9 +1843,9 @@ var app = (function () {
     			main = element("main");
     			if (switch_instance) switch_instance.$$.fragment.c();
     			attr(main, "class", "svelte-1lm8tcl");
-    			add_location(main, file$8, 35, 2, 685);
+    			add_location(main, file$9, 35, 2, 685);
     			attr(div, "class", "app-container svelte-1lm8tcl");
-    			add_location(div, file$8, 33, 0, 627);
+    			add_location(div, file$9, 33, 0, 627);
     		},
 
     		l: function claim(nodes) {
@@ -1589,7 +1919,7 @@ var app = (function () {
     	};
     }
 
-    function instance$6($$self, $$props, $$invalidate) {
+    function instance$7($$self, $$props, $$invalidate) {
     	
 
       let state = {
@@ -1611,7 +1941,7 @@ var app = (function () {
     class App extends SvelteComponentDev {
     	constructor(options) {
     		super(options);
-    		init(this, options, instance$6, create_fragment$8, safe_not_equal, ["handleSelect"]);
+    		init(this, options, instance$7, create_fragment$9, safe_not_equal, ["handleSelect"]);
     	}
 
     	get handleSelect() {

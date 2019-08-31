@@ -2,6 +2,7 @@
   import Papa from 'papaparse';
   import Table from '../Table.svelte';
   import Modal from '../Modal.svelte';
+  import TextInput from './TextInput.svelte';
 
   let data = [];
   let showModal = true;
@@ -68,7 +69,9 @@
       <div class="file-path-wrapper">
         <input class="file-path validate" type="text" placeholder="Upload CVS" />
       </div>
+      <TextInput />
     </div>
+
   </form>
 
   {#if isData}

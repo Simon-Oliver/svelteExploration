@@ -5,9 +5,11 @@
   import TextInput from './TextInput.svelte';
 
   let data = [];
-  let showModal = true;
+  let showModal = false;
   $: isData = data.length !== 0;
   let selected = {};
+
+  let textOutput = '';
 
   const parseData = file => {
     Papa.parse(file, {
@@ -30,19 +32,19 @@
   const handelSelect = e => {
     const index = e.detail.target.parentElement.id;
     selected = data[index];
-    console.log(selected);
 
     convertToText(employerTxT, selected);
+    showModal = true;
   };
 
   const convertToText = (text, data) => {
     let newText = text.replace(/{employerName}/g, data['employerName']);
     newText = newText.replace(/{userName}/g, data['userName']);
 
-    console.log(newText);
+    textOutput = newText;
   };
 
-  const employerTxT = 'Hi {employerName} we need the TP for {userName}';
+  let employerTxT = 'Hi {employerName} we need the TP for {userName}';
 </script>
 
 <style>
@@ -51,14 +53,9 @@
 
 {#if showModal}
   <Modal on:close={() => (showModal = false)}>
-    <h4 slot="body">
-      Lorem ipsum dolor sit amet consectetur adipisicing elit. Quas, ex quae? Iste harum dignissimos
-      quos commodi sapiente quaerat sunt nobis voluptate et asperiores architecto, amet, adipisci
-      tenetur natus excepturi nam.
-    </h4>
+    <p slot="body">{textOutput}</p>
   </Modal>
 {/if}
-
 <div class="container">
   <form action="#">
     <div class="file-field input-field">
@@ -69,7 +66,7 @@
       <div class="file-path-wrapper">
         <input class="file-path validate" type="text" placeholder="Upload CVS" />
       </div>
-      <TextInput />
+      <TextInput on:textInput={item => (employerTxT = item.detail)} bodyText={employerTxT} />
     </div>
 
   </form>

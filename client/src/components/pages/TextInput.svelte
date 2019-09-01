@@ -1,6 +1,7 @@
 <script>
-  let employerTxT = '';
-
+  import { createEventDispatcher } from 'svelte';
+  const dispatch = createEventDispatcher();
+  export let bodyText = '';
 </script>
 
 <div class="row">
@@ -10,7 +11,8 @@
         <textarea
           id="textarea1"
           class="materialize-textarea"
-          bind:value={employerTxT}
+          bind:value={bodyText}
+          on:change={() => dispatch('textInput', bodyText)} />
         <label for="textarea1">Textarea</label>
       </div>
     </div>

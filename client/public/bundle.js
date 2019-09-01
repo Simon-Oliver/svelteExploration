@@ -1468,21 +1468,21 @@ var app = (function () {
     			label.textContent = "Textarea";
     			attr(textarea, "id", "textarea1");
     			attr(textarea, "class", "materialize-textarea");
-    			add_location(textarea, file$8, 13, 8, 249);
+    			add_location(textarea, file$8, 10, 8, 255);
     			attr(label, "for", "textarea1");
-    			add_location(label, file$8, 18, 8, 413);
+    			add_location(label, file$8, 15, 8, 432);
     			attr(div0, "class", "input-field col s12");
-    			add_location(div0, file$8, 12, 6, 207);
+    			add_location(div0, file$8, 9, 6, 213);
     			attr(div1, "class", "row");
-    			add_location(div1, file$8, 11, 4, 183);
+    			add_location(div1, file$8, 8, 4, 189);
     			attr(form, "class", "col s12");
-    			add_location(form, file$8, 10, 2, 156);
+    			add_location(form, file$8, 7, 2, 162);
     			attr(div2, "class", "row");
-    			add_location(div2, file$8, 9, 0, 136);
+    			add_location(div2, file$8, 6, 0, 142);
 
     			dispose = [
     				listen(textarea, "input", ctx.textarea_input_handler),
-    				listen(textarea, "input", ctx.input_handler)
+    				listen(textarea, "change", ctx.change_handler)
     			];
     		},
 
@@ -1497,14 +1497,14 @@ var app = (function () {
     			append(div1, div0);
     			append(div0, textarea);
 
-    			set_input_value(textarea, ctx.employerTxT);
+    			set_input_value(textarea, ctx.bodyText);
 
     			append(div0, t);
     			append(div0, label);
     		},
 
     		p: function update(changed, ctx) {
-    			if (changed.employerTxT) set_input_value(textarea, ctx.employerTxT);
+    			if (changed.bodyText) set_input_value(textarea, ctx.bodyText);
     		},
 
     		i: noop,
@@ -1521,34 +1521,47 @@ var app = (function () {
     }
 
     function instance$6($$self, $$props, $$invalidate) {
-    	let employerTxT = '';
+    	const dispatch = createEventDispatcher();
+      let { bodyText = '' } = $$props;
 
-      const handleOnChange = e => {
-        $$invalidate('employerTxT', employerTxT = e.target.value);
-        console.log(e);
-      };
+    	const writable_props = ['bodyText'];
+    	Object.keys($$props).forEach(key => {
+    		if (!writable_props.includes(key) && !key.startsWith('$$')) console.warn(`<TextInput> was created with unknown prop '${key}'`);
+    	});
 
     	function textarea_input_handler() {
-    		employerTxT = this.value;
-    		$$invalidate('employerTxT', employerTxT);
+    		bodyText = this.value;
+    		$$invalidate('bodyText', bodyText);
     	}
 
-    	function input_handler(e) {
-    		return handleOnChange(e);
+    	function change_handler() {
+    		return dispatch('textInput', bodyText);
     	}
+
+    	$$self.$set = $$props => {
+    		if ('bodyText' in $$props) $$invalidate('bodyText', bodyText = $$props.bodyText);
+    	};
 
     	return {
-    		employerTxT,
-    		handleOnChange,
+    		dispatch,
+    		bodyText,
     		textarea_input_handler,
-    		input_handler
+    		change_handler
     	};
     }
 
     class TextInput extends SvelteComponentDev {
     	constructor(options) {
     		super(options);
-    		init(this, options, instance$6, create_fragment$8, safe_not_equal, []);
+    		init(this, options, instance$6, create_fragment$8, safe_not_equal, ["bodyText"]);
+    	}
+
+    	get bodyText() {
+    		throw new Error("<TextInput>: Props cannot be read directly from the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+    	}
+
+    	set bodyText(value) {
+    		throw new Error("<TextInput>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
     	}
     }
 
@@ -1556,7 +1569,7 @@ var app = (function () {
 
     const file$9 = "src/components/pages/Uploader.svelte";
 
-    // (52:0) {#if showModal}
+    // (54:0) {#if showModal}
     function create_if_block_1(ctx) {
     	var current;
 
@@ -1582,6 +1595,12 @@ var app = (function () {
     			current = true;
     		},
 
+    		p: function update(changed, ctx) {
+    			var modal_changes = {};
+    			if (changed.$$scope || changed.textOutput) modal_changes.$$scope = { changed, ctx };
+    			modal.$set(modal_changes);
+    		},
+
     		i: function intro(local) {
     			if (current) return;
     			transition_in(modal.$$.fragment, local);
@@ -1600,31 +1619,38 @@ var app = (function () {
     	};
     }
 
-    // (54:4) <h4 slot="body">
+    // (56:4) <p slot="body">
     function create_body_slot(ctx) {
-    	var h4;
+    	var p, t;
 
     	return {
     		c: function create() {
-    			h4 = element("h4");
-    			h4.textContent = "Lorem ipsum dolor sit amet consectetur adipisicing elit. Quas, ex quae? Iste harum dignissimos\n      quos commodi sapiente quaerat sunt nobis voluptate et asperiores architecto, amet, adipisci\n      tenetur natus excepturi nam.";
-    			attr(h4, "slot", "body");
-    			add_location(h4, file$9, 53, 4, 1205);
+    			p = element("p");
+    			t = text(ctx.textOutput);
+    			attr(p, "slot", "body");
+    			add_location(p, file$9, 55, 4, 1223);
     		},
 
     		m: function mount(target, anchor) {
-    			insert(target, h4, anchor);
+    			insert(target, p, anchor);
+    			append(p, t);
+    		},
+
+    		p: function update(changed, ctx) {
+    			if (changed.textOutput) {
+    				set_data(t, ctx.textOutput);
+    			}
     		},
 
     		d: function destroy(detaching) {
     			if (detaching) {
-    				detach(h4);
+    				detach(p);
     			}
     		}
     	};
     }
 
-    // (53:2) <Modal on:close={() => (showModal = false)}>
+    // (55:2) <Modal on:close={() => (showModal = false)}>
     function create_default_slot(ctx) {
     	return {
     		c: noop,
@@ -1634,7 +1660,7 @@ var app = (function () {
     	};
     }
 
-    // (79:2) {:else}
+    // (76:2) {:else}
     function create_else_block$1(ctx) {
     	var p;
 
@@ -1642,7 +1668,7 @@ var app = (function () {
     		c: function create() {
     			p = element("p");
     			p.textContent = "Please uploade some data";
-    			add_location(p, file$9, 79, 4, 1940);
+    			add_location(p, file$9, 76, 4, 1802);
     		},
 
     		m: function mount(target, anchor) {
@@ -1661,7 +1687,7 @@ var app = (function () {
     	};
     }
 
-    // (77:2) {#if isData}
+    // (74:2) {#if isData}
     function create_if_block$1(ctx) {
     	var current;
 
@@ -1710,7 +1736,11 @@ var app = (function () {
 
     	var if_block0 = (ctx.showModal) && create_if_block_1(ctx);
 
-    	var textinput = new TextInput({ $$inline: true });
+    	var textinput = new TextInput({
+    		props: { bodyText: ctx.employerTxT },
+    		$$inline: true
+    	});
+    	textinput.$on("textInput", ctx.textInput_handler);
 
     	var if_block_creators = [
     		create_if_block$1,
@@ -1746,23 +1776,23 @@ var app = (function () {
     			textinput.$$.fragment.c();
     			t5 = space();
     			if_block1.c();
-    			add_location(span, file$9, 65, 8, 1601);
+    			add_location(span, file$9, 62, 8, 1389);
     			attr(input0, "type", "file");
-    			add_location(input0, file$9, 66, 8, 1627);
+    			add_location(input0, file$9, 63, 8, 1415);
     			attr(div0, "class", "btn");
-    			add_location(div0, file$9, 64, 6, 1575);
+    			add_location(div0, file$9, 61, 6, 1363);
     			attr(input1, "class", "file-path validate");
     			attr(input1, "type", "text");
     			attr(input1, "placeholder", "Upload CVS");
-    			add_location(input1, file$9, 69, 8, 1735);
+    			add_location(input1, file$9, 66, 8, 1523);
     			attr(div1, "class", "file-path-wrapper");
-    			add_location(div1, file$9, 68, 6, 1695);
+    			add_location(div1, file$9, 65, 6, 1483);
     			attr(div2, "class", "file-field input-field");
-    			add_location(div2, file$9, 63, 4, 1532);
+    			add_location(div2, file$9, 60, 4, 1320);
     			attr(form, "action", "#");
-    			add_location(form, file$9, 62, 2, 1510);
+    			add_location(form, file$9, 59, 2, 1298);
     			attr(div3, "class", "container");
-    			add_location(div3, file$9, 61, 0, 1484);
+    			add_location(div3, file$9, 58, 0, 1272);
     			dispose = listen(input0, "change", ctx.handleOnSubmit);
     		},
 
@@ -1792,13 +1822,14 @@ var app = (function () {
 
     		p: function update(changed, ctx) {
     			if (ctx.showModal) {
-    				if (!if_block0) {
+    				if (if_block0) {
+    					if_block0.p(changed, ctx);
+    					transition_in(if_block0, 1);
+    				} else {
     					if_block0 = create_if_block_1(ctx);
     					if_block0.c();
     					transition_in(if_block0, 1);
     					if_block0.m(t0.parentNode, t0);
-    				} else {
-    									transition_in(if_block0, 1);
     				}
     			} else if (if_block0) {
     				group_outros();
@@ -1807,6 +1838,10 @@ var app = (function () {
     				});
     				check_outros();
     			}
+
+    			var textinput_changes = {};
+    			if (changed.employerTxT) textinput_changes.bodyText = ctx.employerTxT;
+    			textinput.$set(textinput_changes);
 
     			var previous_block_index = current_block_type_index;
     			current_block_type_index = select_block_type(changed, ctx);
@@ -1862,14 +1897,14 @@ var app = (function () {
     	};
     }
 
-    const employerTxT = 'Hi {employerName} we need the TP for {userName}';
-
     function instance$7($$self, $$props, $$invalidate) {
     	
 
       let data = [];
-      let showModal = true;
+      let showModal = false;
       let selected = {};
+
+      let textOutput = '';
 
       const parseData = file => {
         papaparse_min.parse(file, {
@@ -1892,21 +1927,29 @@ var app = (function () {
       const handelSelect = e => {
         const index = e.detail.target.parentElement.id;
         selected = data[index];
-        console.log(selected);
 
         convertToText(employerTxT, selected);
+        $$invalidate('showModal', showModal = true);
       };
 
       const convertToText = (text, data) => {
         let newText = text.replace(/{employerName}/g, data['employerName']);
         newText = newText.replace(/{userName}/g, data['userName']);
 
-        console.log(newText);
+        $$invalidate('textOutput', textOutput = newText);
       };
+
+      let employerTxT = 'Hi {employerName} we need the TP for {userName}';
 
     	function close_handler() {
     		const $$result = (showModal = false);
     		$$invalidate('showModal', showModal);
+    		return $$result;
+    	}
+
+    	function textInput_handler(item) {
+    		const $$result = (employerTxT = item.detail);
+    		$$invalidate('employerTxT', employerTxT);
     		return $$result;
     	}
 
@@ -1919,10 +1962,13 @@ var app = (function () {
     	return {
     		data,
     		showModal,
+    		textOutput,
     		handleOnSubmit,
     		handelSelect,
+    		employerTxT,
     		isData,
-    		close_handler
+    		close_handler,
+    		textInput_handler
     	};
     }
 

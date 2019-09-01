@@ -9,7 +9,8 @@
   $: isData = data.length !== 0;
   let selected = {};
 
-  let textOutput = '';
+  let textOutputEMP = '';
+  let textOutputAA = '';
 
   const parseData = file => {
     Papa.parse(file, {
@@ -33,7 +34,8 @@
     const index = e.detail.target.parentElement.id;
     selected = data[index];
 
-    convertToText(employerTxT, selected);
+    textOutputEMP = convertToText(employerTxT, selected);
+    textOutputAA = convertToText(apprenticeTxT, selected);
     showModal = true;
   };
 
@@ -41,10 +43,11 @@
     let newText = text.replace(/{employerName}/g, data['employerName']);
     newText = newText.replace(/{userName}/g, data['userName']);
 
-    textOutput = newText;
+    return newText;
   };
 
   let employerTxT = 'Hi {employerName} we need the TP for {userName}';
+  let apprenticeTxT = 'Hi {userName}, we need your TP!';
 </script>
 
 <style>
@@ -53,7 +56,11 @@
 
 {#if showModal}
   <Modal on:close={() => (showModal = false)}>
-    <p slot="body">{textOutput}</p>
+    <h5 slot="body">Employer:</h5>
+    <p slot="body">{textOutputEMP}</p>
+    <hr />
+    <h5 slot="body">Apprentice:</h5>
+    <p slot="body">{textOutputAA}</p>
   </Modal>
 {/if}
 <div class="container">
@@ -66,7 +73,18 @@
       <div class="file-path-wrapper">
         <input class="file-path validate" type="text" placeholder="Upload CVS" />
       </div>
-      <TextInput on:textInput={item => (employerTxT = item.detail)} bodyText={employerTxT} />
+
+      <div class="row">
+        <TextInput
+          on:textInput={item => (employerTxT = item.detail)}
+          bodyText={employerTxT}
+          areaLabel="Employer Message" />
+        <TextInput
+          on:textInput={item => (apprenticeTxT = item.detail)}
+          bodyText={apprenticeTxT}
+          areaLabel="Apprentice Message" />
+      </div>
+
     </div>
 
   </form>

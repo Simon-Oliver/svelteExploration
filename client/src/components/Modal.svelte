@@ -18,6 +18,7 @@
     position: absolute;
     top: 50%;
     left: 50%;
+    height: auto;
     z-index: 99999;
     transform: translate(-50%, -50%);
     padding: 4em;

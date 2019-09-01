@@ -1347,15 +1347,15 @@ var app = (function () {
     			t1 = space();
     			a = element("a");
     			a.textContent = "Close";
-    			attr(div0, "class", "modal-background svelte-1pbzyye");
-    			add_location(div0, file$7, 35, 0, 583);
+    			attr(div0, "class", "modal-background svelte-1a89qdr");
+    			add_location(div0, file$7, 36, 0, 601);
 
-    			attr(a, "class", "button waves-effect waves-light btn svelte-1pbzyye");
-    			add_location(a, file$7, 40, 4, 735);
+    			attr(a, "class", "button waves-effect waves-light btn svelte-1a89qdr");
+    			add_location(a, file$7, 41, 4, 753);
     			attr(div1, "class", "modal-content");
-    			add_location(div1, file$7, 38, 2, 678);
-    			attr(div2, "class", "modal-box svelte-1pbzyye");
-    			add_location(div2, file$7, 37, 0, 652);
+    			add_location(div1, file$7, 39, 2, 696);
+    			attr(div2, "class", "modal-box svelte-1a89qdr");
+    			add_location(div2, file$7, 38, 0, 670);
 
     			dispose = [
     				listen(div0, "click", ctx.click_handler),
@@ -1454,31 +1454,28 @@ var app = (function () {
     const file$8 = "src/components/pages/TextInput.svelte";
 
     function create_fragment$8(ctx) {
-    	var div2, form, div1, div0, textarea, t, label, dispose;
+    	var form, div1, div0, textarea, t0, label, t1, dispose;
 
     	return {
     		c: function create() {
-    			div2 = element("div");
     			form = element("form");
     			div1 = element("div");
     			div0 = element("div");
     			textarea = element("textarea");
-    			t = space();
+    			t0 = space();
     			label = element("label");
-    			label.textContent = "Textarea";
+    			t1 = text(ctx.areaLabel);
     			attr(textarea, "id", "textarea1");
     			attr(textarea, "class", "materialize-textarea");
-    			add_location(textarea, file$8, 10, 8, 255);
+    			add_location(textarea, file$8, 10, 6, 265);
     			attr(label, "for", "textarea1");
-    			add_location(label, file$8, 15, 8, 432);
+    			add_location(label, file$8, 15, 6, 432);
     			attr(div0, "class", "input-field col s12");
-    			add_location(div0, file$8, 9, 6, 213);
+    			add_location(div0, file$8, 9, 4, 225);
     			attr(div1, "class", "row");
-    			add_location(div1, file$8, 8, 4, 189);
-    			attr(form, "class", "col s12");
-    			add_location(form, file$8, 7, 2, 162);
-    			attr(div2, "class", "row");
-    			add_location(div2, file$8, 6, 0, 142);
+    			add_location(div1, file$8, 8, 2, 203);
+    			attr(form, "class", "col s6");
+    			add_location(form, file$8, 7, 0, 179);
 
     			dispose = [
     				listen(textarea, "input", ctx.textarea_input_handler),
@@ -1491,20 +1488,24 @@ var app = (function () {
     		},
 
     		m: function mount(target, anchor) {
-    			insert(target, div2, anchor);
-    			append(div2, form);
+    			insert(target, form, anchor);
     			append(form, div1);
     			append(div1, div0);
     			append(div0, textarea);
 
     			set_input_value(textarea, ctx.bodyText);
 
-    			append(div0, t);
+    			append(div0, t0);
     			append(div0, label);
+    			append(label, t1);
     		},
 
     		p: function update(changed, ctx) {
     			if (changed.bodyText) set_input_value(textarea, ctx.bodyText);
+
+    			if (changed.areaLabel) {
+    				set_data(t1, ctx.areaLabel);
+    			}
     		},
 
     		i: noop,
@@ -1512,7 +1513,7 @@ var app = (function () {
 
     		d: function destroy(detaching) {
     			if (detaching) {
-    				detach(div2);
+    				detach(form);
     			}
 
     			run_all(dispose);
@@ -1522,9 +1523,9 @@ var app = (function () {
 
     function instance$6($$self, $$props, $$invalidate) {
     	const dispatch = createEventDispatcher();
-      let { bodyText = '' } = $$props;
+      let { bodyText = '', areaLabel = 'Textarea' } = $$props;
 
-    	const writable_props = ['bodyText'];
+    	const writable_props = ['bodyText', 'areaLabel'];
     	Object.keys($$props).forEach(key => {
     		if (!writable_props.includes(key) && !key.startsWith('$$')) console.warn(`<TextInput> was created with unknown prop '${key}'`);
     	});
@@ -1540,11 +1541,13 @@ var app = (function () {
 
     	$$self.$set = $$props => {
     		if ('bodyText' in $$props) $$invalidate('bodyText', bodyText = $$props.bodyText);
+    		if ('areaLabel' in $$props) $$invalidate('areaLabel', areaLabel = $$props.areaLabel);
     	};
 
     	return {
     		dispatch,
     		bodyText,
+    		areaLabel,
     		textarea_input_handler,
     		change_handler
     	};
@@ -1553,7 +1556,7 @@ var app = (function () {
     class TextInput extends SvelteComponentDev {
     	constructor(options) {
     		super(options);
-    		init(this, options, instance$6, create_fragment$8, safe_not_equal, ["bodyText"]);
+    		init(this, options, instance$6, create_fragment$8, safe_not_equal, ["bodyText", "areaLabel"]);
     	}
 
     	get bodyText() {
@@ -1563,13 +1566,21 @@ var app = (function () {
     	set bodyText(value) {
     		throw new Error("<TextInput>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
     	}
+
+    	get areaLabel() {
+    		throw new Error("<TextInput>: Props cannot be read directly from the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+    	}
+
+    	set areaLabel(value) {
+    		throw new Error("<TextInput>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+    	}
     }
 
     /* src/components/pages/Uploader.svelte generated by Svelte v3.9.1 */
 
     const file$9 = "src/components/pages/Uploader.svelte";
 
-    // (54:0) {#if showModal}
+    // (57:0) {#if showModal}
     function create_if_block_1(ctx) {
     	var current;
 
@@ -1597,7 +1608,7 @@ var app = (function () {
 
     		p: function update(changed, ctx) {
     			var modal_changes = {};
-    			if (changed.$$scope || changed.textOutput) modal_changes.$$scope = { changed, ctx };
+    			if (changed.$$scope || changed.textOutputAA || changed.textOutputEMP) modal_changes.$$scope = { changed, ctx };
     			modal.$set(modal_changes);
     		},
 
@@ -1619,48 +1630,97 @@ var app = (function () {
     	};
     }
 
-    // (56:4) <p slot="body">
+    // (63:4) <p slot="body">
     function create_body_slot(ctx) {
-    	var p, t;
+    	var h50, p0, t1, h51, p1, t3;
 
     	return {
     		c: function create() {
-    			p = element("p");
-    			t = text(ctx.textOutput);
-    			attr(p, "slot", "body");
-    			add_location(p, file$9, 55, 4, 1223);
+    			h50 = element("h5");
+    			h50.textContent = "Employer:";
+    			p0 = element("p");
+    			t1 = text(ctx.textOutputEMP);
+    			h51 = element("h5");
+    			h51.textContent = "Apprentice:";
+    			p1 = element("p");
+    			t3 = text(ctx.textOutputAA);
+    			attr(h50, "slot", "body");
+    			add_location(h50, file$9, 58, 4, 1377);
+    			attr(p0, "slot", "body");
+    			add_location(p0, file$9, 59, 4, 1412);
+    			attr(h51, "slot", "body");
+    			add_location(h51, file$9, 61, 4, 1462);
+    			attr(p1, "slot", "body");
+    			add_location(p1, file$9, 62, 4, 1499);
     		},
 
     		m: function mount(target, anchor) {
-    			insert(target, p, anchor);
-    			append(p, t);
+    			insert(target, h50, anchor);
+    			insert(target, p0, anchor);
+    			append(p0, t1);
+    			insert(target, h51, anchor);
+    			insert(target, p1, anchor);
+    			append(p1, t3);
     		},
 
     		p: function update(changed, ctx) {
-    			if (changed.textOutput) {
-    				set_data(t, ctx.textOutput);
+    			if (changed.textOutputEMP) {
+    				set_data(t1, ctx.textOutputEMP);
+    			}
+
+    			if (changed.textOutputAA) {
+    				set_data(t3, ctx.textOutputAA);
     			}
     		},
 
     		d: function destroy(detaching) {
     			if (detaching) {
-    				detach(p);
+    				detach(h50);
+    				detach(p0);
+    				detach(h51);
+    				detach(p1);
     			}
     		}
     	};
     }
 
-    // (55:2) <Modal on:close={() => (showModal = false)}>
+    // (58:2) <Modal on:close={() => (showModal = false)}>
     function create_default_slot(ctx) {
+    	var t0, t1, hr, t2, t3;
+
     	return {
-    		c: noop,
-    		m: noop,
+    		c: function create() {
+    			t0 = space();
+    			t1 = space();
+    			hr = element("hr");
+    			t2 = space();
+    			t3 = space();
+    			add_location(hr, file$9, 60, 4, 1451);
+    		},
+
+    		m: function mount(target, anchor) {
+    			insert(target, t0, anchor);
+    			insert(target, t1, anchor);
+    			insert(target, hr, anchor);
+    			insert(target, t2, anchor);
+    			insert(target, t3, anchor);
+    		},
+
     		p: noop,
-    		d: noop
+
+    		d: function destroy(detaching) {
+    			if (detaching) {
+    				detach(t0);
+    				detach(t1);
+    				detach(hr);
+    				detach(t2);
+    				detach(t3);
+    			}
+    		}
     	};
     }
 
-    // (76:2) {:else}
+    // (94:2) {:else}
     function create_else_block$1(ctx) {
     	var p;
 
@@ -1668,7 +1728,7 @@ var app = (function () {
     		c: function create() {
     			p = element("p");
     			p.textContent = "Please uploade some data";
-    			add_location(p, file$9, 76, 4, 1802);
+    			add_location(p, file$9, 94, 4, 2341);
     		},
 
     		m: function mount(target, anchor) {
@@ -1687,7 +1747,7 @@ var app = (function () {
     	};
     }
 
-    // (74:2) {#if isData}
+    // (92:2) {#if isData}
     function create_if_block$1(ctx) {
     	var current;
 
@@ -1732,15 +1792,27 @@ var app = (function () {
     }
 
     function create_fragment$9(ctx) {
-    	var t0, div3, form, div2, div0, span, t2, input0, t3, div1, input1, t4, t5, current_block_type_index, if_block1, current, dispose;
+    	var t0, div4, form, div3, div0, span, t2, input0, t3, div1, input1, t4, div2, t5, t6, current_block_type_index, if_block1, current, dispose;
 
     	var if_block0 = (ctx.showModal) && create_if_block_1(ctx);
 
-    	var textinput = new TextInput({
-    		props: { bodyText: ctx.employerTxT },
+    	var textinput0 = new TextInput({
+    		props: {
+    		bodyText: ctx.employerTxT,
+    		areaLabel: "Employer Message"
+    	},
     		$$inline: true
     	});
-    	textinput.$on("textInput", ctx.textInput_handler);
+    	textinput0.$on("textInput", ctx.textInput_handler);
+
+    	var textinput1 = new TextInput({
+    		props: {
+    		bodyText: ctx.apprenticeTxT,
+    		areaLabel: "Apprentice Message"
+    	},
+    		$$inline: true
+    	});
+    	textinput1.$on("textInput", ctx.textInput_handler_1);
 
     	var if_block_creators = [
     		create_if_block$1,
@@ -1761,9 +1833,9 @@ var app = (function () {
     		c: function create() {
     			if (if_block0) if_block0.c();
     			t0 = space();
-    			div3 = element("div");
+    			div4 = element("div");
     			form = element("form");
-    			div2 = element("div");
+    			div3 = element("div");
     			div0 = element("div");
     			span = element("span");
     			span.textContent = "File";
@@ -1773,26 +1845,31 @@ var app = (function () {
     			div1 = element("div");
     			input1 = element("input");
     			t4 = space();
-    			textinput.$$.fragment.c();
+    			div2 = element("div");
+    			textinput0.$$.fragment.c();
     			t5 = space();
+    			textinput1.$$.fragment.c();
+    			t6 = space();
     			if_block1.c();
-    			add_location(span, file$9, 62, 8, 1389);
+    			add_location(span, file$9, 69, 8, 1667);
     			attr(input0, "type", "file");
-    			add_location(input0, file$9, 63, 8, 1415);
+    			add_location(input0, file$9, 70, 8, 1693);
     			attr(div0, "class", "btn");
-    			add_location(div0, file$9, 61, 6, 1363);
+    			add_location(div0, file$9, 68, 6, 1641);
     			attr(input1, "class", "file-path validate");
     			attr(input1, "type", "text");
     			attr(input1, "placeholder", "Upload CVS");
-    			add_location(input1, file$9, 66, 8, 1523);
+    			add_location(input1, file$9, 73, 8, 1801);
     			attr(div1, "class", "file-path-wrapper");
-    			add_location(div1, file$9, 65, 6, 1483);
-    			attr(div2, "class", "file-field input-field");
-    			add_location(div2, file$9, 60, 4, 1320);
+    			add_location(div1, file$9, 72, 6, 1761);
+    			attr(div2, "class", "row");
+    			add_location(div2, file$9, 76, 6, 1895);
+    			attr(div3, "class", "file-field input-field");
+    			add_location(div3, file$9, 67, 4, 1598);
     			attr(form, "action", "#");
-    			add_location(form, file$9, 59, 2, 1298);
-    			attr(div3, "class", "container");
-    			add_location(div3, file$9, 58, 0, 1272);
+    			add_location(form, file$9, 66, 2, 1576);
+    			attr(div4, "class", "container");
+    			add_location(div4, file$9, 65, 0, 1550);
     			dispose = listen(input0, "change", ctx.handleOnSubmit);
     		},
 
@@ -1803,20 +1880,23 @@ var app = (function () {
     		m: function mount(target, anchor) {
     			if (if_block0) if_block0.m(target, anchor);
     			insert(target, t0, anchor);
-    			insert(target, div3, anchor);
-    			append(div3, form);
-    			append(form, div2);
-    			append(div2, div0);
+    			insert(target, div4, anchor);
+    			append(div4, form);
+    			append(form, div3);
+    			append(div3, div0);
     			append(div0, span);
     			append(div0, t2);
     			append(div0, input0);
-    			append(div2, t3);
-    			append(div2, div1);
+    			append(div3, t3);
+    			append(div3, div1);
     			append(div1, input1);
-    			append(div2, t4);
-    			mount_component(textinput, div2, null);
-    			append(div3, t5);
-    			if_blocks[current_block_type_index].m(div3, null);
+    			append(div3, t4);
+    			append(div3, div2);
+    			mount_component(textinput0, div2, null);
+    			append(div2, t5);
+    			mount_component(textinput1, div2, null);
+    			append(div4, t6);
+    			if_blocks[current_block_type_index].m(div4, null);
     			current = true;
     		},
 
@@ -1839,9 +1919,13 @@ var app = (function () {
     				check_outros();
     			}
 
-    			var textinput_changes = {};
-    			if (changed.employerTxT) textinput_changes.bodyText = ctx.employerTxT;
-    			textinput.$set(textinput_changes);
+    			var textinput0_changes = {};
+    			if (changed.employerTxT) textinput0_changes.bodyText = ctx.employerTxT;
+    			textinput0.$set(textinput0_changes);
+
+    			var textinput1_changes = {};
+    			if (changed.apprenticeTxT) textinput1_changes.bodyText = ctx.apprenticeTxT;
+    			textinput1.$set(textinput1_changes);
 
     			var previous_block_index = current_block_type_index;
     			current_block_type_index = select_block_type(changed, ctx);
@@ -1860,7 +1944,7 @@ var app = (function () {
     					if_block1.c();
     				}
     				transition_in(if_block1, 1);
-    				if_block1.m(div3, null);
+    				if_block1.m(div4, null);
     			}
     		},
 
@@ -1868,7 +1952,9 @@ var app = (function () {
     			if (current) return;
     			transition_in(if_block0);
 
-    			transition_in(textinput.$$.fragment, local);
+    			transition_in(textinput0.$$.fragment, local);
+
+    			transition_in(textinput1.$$.fragment, local);
 
     			transition_in(if_block1);
     			current = true;
@@ -1876,7 +1962,8 @@ var app = (function () {
 
     		o: function outro(local) {
     			transition_out(if_block0);
-    			transition_out(textinput.$$.fragment, local);
+    			transition_out(textinput0.$$.fragment, local);
+    			transition_out(textinput1.$$.fragment, local);
     			transition_out(if_block1);
     			current = false;
     		},
@@ -1886,10 +1973,12 @@ var app = (function () {
 
     			if (detaching) {
     				detach(t0);
-    				detach(div3);
+    				detach(div4);
     			}
 
-    			destroy_component(textinput);
+    			destroy_component(textinput0);
+
+    			destroy_component(textinput1);
 
     			if_blocks[current_block_type_index].d();
     			dispose();
@@ -1904,7 +1993,8 @@ var app = (function () {
       let showModal = false;
       let selected = {};
 
-      let textOutput = '';
+      let textOutputEMP = '';
+      let textOutputAA = '';
 
       const parseData = file => {
         papaparse_min.parse(file, {
@@ -1928,7 +2018,8 @@ var app = (function () {
         const index = e.detail.target.parentElement.id;
         selected = data[index];
 
-        convertToText(employerTxT, selected);
+        $$invalidate('textOutputEMP', textOutputEMP = convertToText(employerTxT, selected));
+        $$invalidate('textOutputAA', textOutputAA = convertToText(apprenticeTxT, selected));
         $$invalidate('showModal', showModal = true);
       };
 
@@ -1936,10 +2027,11 @@ var app = (function () {
         let newText = text.replace(/{employerName}/g, data['employerName']);
         newText = newText.replace(/{userName}/g, data['userName']);
 
-        $$invalidate('textOutput', textOutput = newText);
+        return newText;
       };
 
       let employerTxT = 'Hi {employerName} we need the TP for {userName}';
+      let apprenticeTxT = 'Hi {userName}, we need your TP!';
 
     	function close_handler() {
     		const $$result = (showModal = false);
@@ -1953,6 +2045,12 @@ var app = (function () {
     		return $$result;
     	}
 
+    	function textInput_handler_1(item) {
+    		const $$result = (apprenticeTxT = item.detail);
+    		$$invalidate('apprenticeTxT', apprenticeTxT);
+    		return $$result;
+    	}
+
     	let isData;
 
     	$$self.$$.update = ($$dirty = { data: 1 }) => {
@@ -1962,13 +2060,16 @@ var app = (function () {
     	return {
     		data,
     		showModal,
-    		textOutput,
+    		textOutputEMP,
+    		textOutputAA,
     		handleOnSubmit,
     		handelSelect,
     		employerTxT,
+    		apprenticeTxT,
     		isData,
     		close_handler,
-    		textInput_handler
+    		textInput_handler,
+    		textInput_handler_1
     	};
     }
 

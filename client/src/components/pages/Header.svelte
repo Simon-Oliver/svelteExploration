@@ -21,7 +21,7 @@
   .link-container {
     display: flex;
     justify-content: space-between;
-    width: 230px;
+    width: 260px;
     color: white;
     margin: 0 5rem;
     list-style: none;
@@ -39,5 +39,6 @@
     <li class="header-link">About</li>
     <li class="header-link">Contact</li>
     <li class="header-link">Uploader</li>
+    <li class="header-link">Order</li>
   </ul>
 </div>

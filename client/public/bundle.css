@@ -1,6 +1,9 @@
 .app-container.svelte-1lm8tcl{box-sizing:border-box;height:100vh;width:100vw}main.svelte-1lm8tcl{padding:5rem}
-.nav.header-container.svelte-ibxjp0{position:fixed;width:100%;display:flex;align-items:center;background:rgb(22, 22, 22);height:50px;z-index:9999}.link-container.svelte-ibxjp0{display:flex;justify-content:space-between;width:230px;color:white;margin:0 5rem;list-style:none;padding:0}.header-link.svelte-ibxjp0:hover{cursor:pointer}
 p.svelte-yucpru{height:120vh}
+.nav.header-container.svelte-158ulsv{position:fixed;width:100%;display:flex;align-items:center;background:rgb(22, 22, 22);height:50px;z-index:9999}.link-container.svelte-158ulsv{display:flex;justify-content:space-between;width:260px;color:white;margin:0 5rem;list-style:none;padding:0}.header-link.svelte-158ulsv:hover{cursor:pointer}
 .modal-background.svelte-1a89qdr{position:fixed;top:0;left:0;z-index:9999;background:#47474760;height:100%;width:100%}.modal-box.svelte-1a89qdr{position:absolute;top:50%;left:50%;height:auto;z-index:99999;transform:translate(-50%, -50%);padding:4em;border-radius:10px;background:white}.button.svelte-1a89qdr{position:absolute;bottom:2rem;right:5rem}
+.order-container.svelte-aew2z9{display:flex;height:80vh;justify-content:space-between}
+.input-container.svelte-1mt7wro{width:50vw;height:100%;background:lavender}
+.order-container.svelte-ucoapk{width:50vw;height:100%;background:red}
 
 /*# sourceMappingURL=bundle.css.map */

@@ -4,19 +4,21 @@
   import About from './components/pages/About.svelte';
   import Contact from './components/pages/Contact.svelte';
   import Uploader from './components/pages/Uploader.svelte';
+  import Order from './components/pages/Order.svelte';
 
   let state = {
     Home,
     About,
     Contact,
-    Uploader
+    Uploader,
+    Order
   };
 
   export const handleSelect = e => {
     selected = event.target.textContent;
   };
 
-  let selected = 'Uploader';
+  let selected = 'Order';
 </script>
 
 <style>
